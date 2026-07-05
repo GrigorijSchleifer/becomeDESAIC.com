@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EDAIC Rapid Viva</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #162028;
+      --ink-soft: #43535f;
+      --brand: #0f766e;
+      --brand-dark: #0a524d;
+      --line: #d8d4c7;
+      --surface: #fffdf8;
+      --shadow: 0 18px 40px rgba(13, 37, 48, 0.14);
+      --radius: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Space Grotesk", "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 8%, rgba(232, 137, 46, 0.13), transparent 38%),
+        radial-gradient(circle at 90% 0%, rgba(15, 118, 110, 0.18), transparent 35%),
+        linear-gradient(180deg, #f4efe1 0%, #f8f6ef 56%, #f3f4ef 100%);
+      min-height: 100vh;
+      line-height: 1.45;
+      padding: 1.3rem;
+    }
+
+    .shell {
+      width: min(1100px, 100%);
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.64);
+      border: 1px solid rgba(216, 212, 199, 0.76);
+      border-radius: 20px;
+      backdrop-filter: blur(7px);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .topbar {
+      padding: 0.95rem 1.2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand {
+      font-family: "Fraunces", Georgia, serif;
+      font-size: 1.25rem;
+    }
+
+    .brand span {
+      color: var(--brand);
+    }
+
+    .meta {
+      color: var(--ink-soft);
+      font-size: 0.9rem;
+    }
+
+    .hero {
+      padding: 1.3rem 1.2rem 0.6rem;
+    }
+
+    .title {
+      font-family: "Fraunces", Georgia, serif;
+      font-size: clamp(1.8rem, 4vw, 2.7rem);
+      line-height: 1.08;
+      margin-bottom: 0.45rem;
+      max-width: 16ch;
+    }
+
+    .subtitle {
+      color: var(--ink-soft);
+      font-size: 1rem;
+      max-width: 56ch;
+      margin-bottom: 0.9rem;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.1rem;
+    }
+
+    .chip {
+      padding: 0.35rem 0.65rem;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.85);
+      color: var(--ink-soft);
+      font-size: 0.84rem;
+    }
+
+    .layout {
+      padding: 0 1.2rem 1.2rem;
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 1rem;
+    }
+
+    .left-panel,
+    .right-panel {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 1rem;
+      background: var(--surface);
+    }
+
+    .left-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .question-btn {
+      width: 100%;
+      text-align: left;
+      font-weight: 600;
+      border: 0;
+      border-radius: 12px;
+      padding: 0.82rem 0.95rem;
+      background: var(--brand);
+      color: #ffffff;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .question-btn:hover {
+      background: var(--brand-dark);
+      transform: translateY(-1px);
+    }
+
+    .mini {
+      color: var(--ink-soft);
+      font-size: 0.9rem;
+    }
+
+    .progress {
+      font-size: 0.82rem;
+      color: var(--ink-soft);
+      padding: 0.35rem 0.6rem;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #ffffff;
+      width: fit-content;
+    }
+
+    .label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--ink-soft);
+      margin-bottom: 0.5rem;
+    }
+
+    .answer-field {
+      width: 100%;
+      min-height: 286px;
+      border: 1px solid #ced6cc;
+      border-radius: 10px;
+      padding: 0.9rem;
+      font-size: 0.98rem;
+      line-height: 1.45;
+      color: var(--ink);
+      background: #ffffff;
+      font-family: inherit;
+      white-space: pre-wrap;
+      overflow: auto;
+    }
+
+    .kw {
+      text-decoration: underline dotted;
+      text-underline-offset: 2px;
+      cursor: help;
+      font-weight: 600;
+      color: #0b5f58;
+    }
+
+    .drug-tip {
+      position: fixed;
+      max-width: 300px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fffefb;
+      box-shadow: 0 12px 26px rgba(12, 30, 40, 0.2);
+      padding: 0.65rem 0.75rem;
+      font-size: 0.86rem;
+      color: var(--ink);
+      display: none;
+      z-index: 50;
+      pointer-events: auto;
+    }
+
+    .drug-tip a {
+      color: var(--brand-dark);
+      font-weight: 600;
+    }
+
+    @media (max-width: 760px) {
+      body {
+        padding: 0.8rem;
+      }
+
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .title {
+        max-width: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand">become<span>DESAIC</span>.com</div>
+      <div class="meta">Rapid viva question trainer</div>
+    </header>
+
+    <section class="hero">
+      <h1 class="title">Practice one board-style question at a time.</h1>
+      <p class="subtitle">Short prompts on the left. High-yield answers on the right.</p>
+      <div class="chips" aria-label="Tags">
+        <span class="chip">Neuromuscular Blockers</span>
+        <span class="chip">Pharmacology</span>
+        <span class="chip">Step II Viva</span>
+      </div>
+    </section>
+
+    <section class="layout">
+      <section class="left-panel">
+        <button class="question-btn" id="questionBtn" type="button">How does cisatracurium differ from atracurium?</button>
+        <div class="progress" id="progressText">Question 1 of 11</div>
+        <p class="mini">Tap a question, speak your answer, then compare with the model answer.</p>
+      </section>
+
+      <section class="right-panel">
+        <div class="answer-field" id="answerField" aria-label="Answer field"></div>
+      </section>
+    </section>
+  </main>
+
+  <div class="drug-tip" id="drugTip">
+    Dantrolene: direct-acting skeletal muscle relaxant and ryanodine receptor antagonist used for malignant hyperthermia.
+    <br>
+    <a href="#" id="dantroleneLink">Go to dantrolene question</a>
+  </div>
+
+  <script>
+    const qaPairs = [
+      {
+        question: "How does cisatracurium differ from atracurium?",
+        answer: "Stereoisomer of atracurium, more predictable pharmacokinetic profile, less histamine release, fewer cardiovascular side effects (Hofmann elimination), Atracurium also Hofmann elimination but higher potential for histamine, Cisatracurium is about 3-4 times more potent than atracurium, Atracurium also undergoes, both laudanosine (cross BBB - seizures), More ester hydrolysis, ED95: Atracurium: 0.25 mg/kg, Cisatracurium: 0.05 mg/kg, Atracurium: slightly faster, Cisatracurium: slightly slower because of its higher potency"
+      },
+      {
+        question: "What are the key steps in initial management of anaphylaxis under anesthesia?",
+        answer: "Stop suspected trigger, call for help, 100% oxygen, secure airway, stop volatile if unstable, give IV adrenaline titrated to severity, aggressive crystalloid boluses, start vasopressor infusion if needed, add antihistamine and corticosteroid after stabilization, monitor ABG/lactate, consider tryptase samples, and document trigger clearly for follow-up."
+      },
+      {
+        question: "How do you define and treat malignant hyperthermia?",
+        answer: "Hypermetabolic crisis triggered by volatile agents or succinylcholine in susceptible patients: rising ETCO2, tachycardia, rigidity, hyperthermia, acidosis, hyperkalemia. Stop triggers, call MH protocol, hyperventilate with 100% oxygen, give dantrolene promptly, active cooling, treat hyperkalemia/acidosis, maintain urine output, and monitor for recrudescence in ICU."
+      },
+      {
+        question: "What is dantrolene and when should it be used in anesthesia?",
+        answer: "Dantrolene is a direct-acting skeletal muscle relaxant that blocks calcium release from the sarcoplasmic reticulum via ryanodine receptors. In anesthesia, its key indication is malignant hyperthermia; give early with trigger cessation, cooling, and full supportive management."
+      },
+      {
+        question: "What is your structured approach to difficult intubation in theatre?",
+        answer: "Optimize positioning and preoxygenation, limit repeated attempts, early use of videolaryngoscopy, call for senior help, maintain oxygenation as priority, proceed through a predefined difficult airway plan with supraglottic rescue and front-of-neck access readiness, and wake patient if safe when intubation is not essential immediately."
+      },
+      {
+        question: "How do obstructive and restrictive spirometry patterns differ?",
+        answer: "Obstructive disease shows reduced FEV1, reduced FEV1/FVC ratio, and often scooped expiratory flow-volume limb. Restrictive disease shows proportionate FEV1 and FVC reduction with normal or high FEV1/FVC and reduced lung volumes (especially TLC)."
+      },
+      {
+        question: "What are the causes and immediate treatment of perioperative hypotension after induction?",
+        answer: "Common causes: vasodilation from anesthetics, hypovolemia, myocardial depression, anaphylaxis, or bleeding. Immediate treatment: confirm cuff/line accuracy, assess depth of anesthesia, give fluid bolus, vasopressor (e.g., phenylephrine or ephedrine depending on HR), reduce anesthetic dose, and search quickly for reversible causes."
+      },
+      {
+        question: "How do you manage local anesthetic systemic toxicity (LAST)?",
+        answer: "Stop local anesthetic injection, call for help, airway and oxygenation first, treat seizures with benzodiazepines, avoid large propofol doses in unstable patients, begin lipid emulsion therapy early, continue advanced life support with modified drug choices, and transfer to critical care with prolonged monitoring."
+      },
+      {
+        question: "What are the core principles of lung-protective ventilation in ARDS?",
+        answer: "Use low tidal volume (about 6 mL/kg predicted body weight), limit plateau pressure, apply adequate PEEP, accept permissive hypercapnia if appropriate, optimize oxygen targets, avoid ventilator-induced lung injury, and consider prone positioning early in moderate-severe ARDS."
+      },
+      {
+        question: "How do you reverse non-depolarizing neuromuscular block safely?",
+        answer: "Use quantitative neuromuscular monitoring, choose reversal according to depth and agent (sugammadex for aminosteroids, neostigmine with antimuscarinic for shallow block), confirm TOF ratio at least 0.9 before extubation, and assess clinical recovery and airway protection before PACU transfer."
+      },
+      {
+        question: "What is your approach to postoperative pain management after major abdominal surgery?",
+        answer: "Use multimodal analgesia: paracetamol, NSAID if appropriate, opioid-sparing regional techniques (epidural or truncal blocks), rescue opioid titration, antiemetic strategy, early reassessment of pain scores and side effects, and individualized escalation if pain remains severe."
+      },
+      {
+        question: "How do you assess and optimize a patient with severe aortic stenosis before non-cardiac surgery?",
+        answer: "Clarify symptom severity and valve status, review echo and functional status, involve cardiology and surgery in risk discussion, prefer monitored hemodynamic stability, avoid tachycardia and hypotension, maintain preload/afterload, choose anesthetic plan with minimal instability, and ensure postoperative high-dependency monitoring."
+      }
+    ];
+
+    const questionBtn = document.getElementById("questionBtn");
+    const answerField = document.getElementById("answerField");
+    const progressText = document.getElementById("progressText");
+    const dantroleneLink = document.getElementById("dantroleneLink");
+
+    let currentIndex = 0;
+    let activeDrugKeyword = null;
+    let hideTipTimer = null;
+
+    function escapeHtml(text) {
+      return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function decorateAnswer(text) {
+      return escapeHtml(text).replace(/\b(dantrolene|dantrolen)\b/gi, '<span class="kw" data-drug="dantrolene">$1</span>');
+    }
+
+    function renderPair(index) {
+      questionBtn.textContent = qaPairs[index].question;
+      answerField.innerHTML = decorateAnswer(qaPairs[index].answer);
+      progressText.textContent = `Question ${index + 1} of ${qaPairs.length}`;
+    }
+
+    function showDrugTip(target) {
+      const rect = target.getBoundingClientRect();
+      drugTip.style.display = "block";
+      drugTip.style.left = `${rect.left + window.scrollX}px`;
+      drugTip.style.top = `${rect.bottom + window.scrollY + 8}px`;
+    }
+
+    function scheduleHideDrugTip() {
+      clearTimeout(hideTipTimer);
+      hideTipTimer = setTimeout(() => {
+        if (!activeDrugKeyword) {
+          drugTip.style.display = "none";
+        }
+      }, 120);
+    }
+
+    questionBtn.addEventListener("click", () => {
+      currentIndex = (currentIndex + 1) % qaPairs.length;
+      renderPair(currentIndex);
+    });
+
+    const drugTip = document.getElementById("drugTip");
+
+    answerField.addEventListener("mouseover", (event) => {
+      const hovered = event.target.closest(".kw[data-drug='dantrolene']");
+      if (!hovered) {
+        return;
+      }
+      activeDrugKeyword = hovered;
+      clearTimeout(hideTipTimer);
+      showDrugTip(hovered);
+    });
+
+    answerField.addEventListener("mouseout", (event) => {
+      const fromKeyword = event.target.closest(".kw[data-drug='dantrolene']");
+      if (!fromKeyword) {
+        return;
+      }
+
+      const movingTo = event.relatedTarget;
+      if (movingTo && drugTip.contains(movingTo)) {
+        return;
+      }
+
+      activeDrugKeyword = null;
+      scheduleHideDrugTip();
+    });
+
+    drugTip.addEventListener("mouseenter", () => {
+      clearTimeout(hideTipTimer);
+    });
+
+    drugTip.addEventListener("mouseleave", () => {
+      activeDrugKeyword = null;
+      scheduleHideDrugTip();
+    });
+
+    dantroleneLink.addEventListener("click", (event) => {
+      event.preventDefault();
+      const idx = qaPairs.findIndex((pair) => /\bdantrolene\b/i.test(pair.question));
+      if (idx >= 0) {
+        currentIndex = idx;
+        renderPair(currentIndex);
+      }
+      activeDrugKeyword = null;
+      drugTip.style.display = "none";
+    });
+
+    renderPair(currentIndex);
+  </script>
+</body>
+</html>
