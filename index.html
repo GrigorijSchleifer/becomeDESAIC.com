@@ -89,22 +89,6 @@
       margin-bottom: 0.9rem;
     }
 
-    .chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-bottom: 1.1rem;
-    }
-
-    .chip {
-      padding: 0.35rem 0.65rem;
-      border-radius: 999px;
-      border: 1px solid var(--line);
-      background: rgba(255, 255, 255, 0.85);
-      color: var(--ink-soft);
-      font-size: 0.84rem;
-    }
-
     .layout {
       padding: 0 1.2rem 1.2rem;
       display: grid;
@@ -124,6 +108,19 @@
       display: flex;
       flex-direction: column;
       gap: 0.8rem;
+    }
+
+    .category-select {
+      width: fit-content;
+      margin-top: 0.9rem;
+      padding: 0.6rem 0.7rem;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #ffffff;
+      color: var(--ink);
+      font-family: inherit;
+      font-size: 0.88rem;
+      cursor: pointer;
     }
 
     .question-btn {
@@ -159,6 +156,35 @@
       width: fit-content;
     }
 
+    .nav-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+    }
+
+    .nav-btn {
+      width: 34px;
+      height: 34px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      background: #ffffff;
+      color: var(--brand-dark);
+      font-size: 1.2rem;
+      line-height: 1;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .nav-btn:hover {
+      background: rgba(15, 118, 110, 0.1);
+      transform: translateY(-1px);
+    }
+
     .label {
       font-size: 0.8rem;
       text-transform: uppercase;
@@ -180,6 +206,46 @@
       font-family: inherit;
       white-space: pre-wrap;
       overflow: auto;
+    }
+
+    .answer-field .empty {
+      color: var(--ink-soft);
+      font-style: italic;
+    }
+
+    .answer-field p {
+      margin-bottom: 0.9rem;
+    }
+
+    .answer-field p:last-child {
+      margin-bottom: 0;
+    }
+
+    .answer-field.is-hidden {
+      display: none;
+    }
+
+    .reveal-btn {
+      width: 100%;
+      border: 1px dashed var(--brand);
+      border-radius: 10px;
+      padding: 0.9rem;
+      margin-bottom: 0.8rem;
+      background: rgba(15, 118, 110, 0.06);
+      color: var(--brand-dark);
+      font-weight: 600;
+      font-family: inherit;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .reveal-btn:hover {
+      background: rgba(15, 118, 110, 0.12);
+    }
+
+    .reveal-btn.is-hidden {
+      display: none;
     }
 
     .kw {
@@ -229,27 +295,24 @@
   <main class="shell">
     <header class="topbar">
       <div class="brand">become<span>DESAIC</span>.com</div>
-      <div class="meta">Rapid viva question trainer</div>
     </header>
 
     <section class="hero">
-      <h1 class="title">Practice one board-style question at a time.</h1>
-      <p class="subtitle">Short prompts on the left. High-yield answers on the right.</p>
-      <div class="chips" aria-label="Tags">
-        <span class="chip">Neuromuscular Blockers</span>
-        <span class="chip">Pharmacology</span>
-        <span class="chip">Step II Viva</span>
-      </div>
+      <select class="category-select" id="categorySelect" aria-label="Filter by category"></select>
     </section>
 
     <section class="layout">
       <section class="left-panel">
         <button class="question-btn" id="questionBtn" type="button">How does cisatracurium differ from atracurium?</button>
-        <div class="progress" id="progressText">Question 1 of 11</div>
-        <p class="mini">Tap a question, speak your answer, then compare with the model answer.</p>
+        <div class="nav-row">
+          <button class="nav-btn" id="prevBtn" type="button" aria-label="Previous question">&#8249;</button>
+          <div class="progress" id="progressText">Question 1 of 11</div>
+          <button class="nav-btn" id="nextBtn" type="button" aria-label="Next question">&#8250;</button>
+        </div>
       </section>
 
       <section class="right-panel">
+        <button class="reveal-btn" id="revealBtn" type="button">Show answer</button>
         <div class="answer-field" id="answerField" aria-label="Answer field"></div>
       </section>
     </section>
@@ -261,66 +324,74 @@
     <a href="#" id="dantroleneLink">Go to dantrolene question</a>
   </div>
 
+  <script src="qa-data.js"></script>
   <script>
-    const qaPairs = [
-      {
-        question: "How does cisatracurium differ from atracurium?",
-        answer: "Stereoisomer of atracurium, more predictable pharmacokinetic profile, less histamine release, fewer cardiovascular side effects (Hofmann elimination), Atracurium also Hofmann elimination but higher potential for histamine, Cisatracurium is about 3-4 times more potent than atracurium, Atracurium also undergoes, both laudanosine (cross BBB - seizures), More ester hydrolysis, ED95: Atracurium: 0.25 mg/kg, Cisatracurium: 0.05 mg/kg, Atracurium: slightly faster, Cisatracurium: slightly slower because of its higher potency"
-      },
-      {
-        question: "What are the key steps in initial management of anaphylaxis under anesthesia?",
-        answer: "Stop suspected trigger, call for help, 100% oxygen, secure airway, stop volatile if unstable, give IV adrenaline titrated to severity, aggressive crystalloid boluses, start vasopressor infusion if needed, add antihistamine and corticosteroid after stabilization, monitor ABG/lactate, consider tryptase samples, and document trigger clearly for follow-up."
-      },
-      {
-        question: "How do you define and treat malignant hyperthermia?",
-        answer: "Hypermetabolic crisis triggered by volatile agents or succinylcholine in susceptible patients: rising ETCO2, tachycardia, rigidity, hyperthermia, acidosis, hyperkalemia. Stop triggers, call MH protocol, hyperventilate with 100% oxygen, give dantrolene promptly, active cooling, treat hyperkalemia/acidosis, maintain urine output, and monitor for recrudescence in ICU."
-      },
-      {
-        question: "What is dantrolene and when should it be used in anesthesia?",
-        answer: "Dantrolene is a direct-acting skeletal muscle relaxant that blocks calcium release from the sarcoplasmic reticulum via ryanodine receptors. In anesthesia, its key indication is malignant hyperthermia; give early with trigger cessation, cooling, and full supportive management."
-      },
-      {
-        question: "What is your structured approach to difficult intubation in theatre?",
-        answer: "Optimize positioning and preoxygenation, limit repeated attempts, early use of videolaryngoscopy, call for senior help, maintain oxygenation as priority, proceed through a predefined difficult airway plan with supraglottic rescue and front-of-neck access readiness, and wake patient if safe when intubation is not essential immediately."
-      },
-      {
-        question: "How do obstructive and restrictive spirometry patterns differ?",
-        answer: "Obstructive disease shows reduced FEV1, reduced FEV1/FVC ratio, and often scooped expiratory flow-volume limb. Restrictive disease shows proportionate FEV1 and FVC reduction with normal or high FEV1/FVC and reduced lung volumes (especially TLC)."
-      },
-      {
-        question: "What are the causes and immediate treatment of perioperative hypotension after induction?",
-        answer: "Common causes: vasodilation from anesthetics, hypovolemia, myocardial depression, anaphylaxis, or bleeding. Immediate treatment: confirm cuff/line accuracy, assess depth of anesthesia, give fluid bolus, vasopressor (e.g., phenylephrine or ephedrine depending on HR), reduce anesthetic dose, and search quickly for reversible causes."
-      },
-      {
-        question: "How do you manage local anesthetic systemic toxicity (LAST)?",
-        answer: "Stop local anesthetic injection, call for help, airway and oxygenation first, treat seizures with benzodiazepines, avoid large propofol doses in unstable patients, begin lipid emulsion therapy early, continue advanced life support with modified drug choices, and transfer to critical care with prolonged monitoring."
-      },
-      {
-        question: "What are the core principles of lung-protective ventilation in ARDS?",
-        answer: "Use low tidal volume (about 6 mL/kg predicted body weight), limit plateau pressure, apply adequate PEEP, accept permissive hypercapnia if appropriate, optimize oxygen targets, avoid ventilator-induced lung injury, and consider prone positioning early in moderate-severe ARDS."
-      },
-      {
-        question: "How do you reverse non-depolarizing neuromuscular block safely?",
-        answer: "Use quantitative neuromuscular monitoring, choose reversal according to depth and agent (sugammadex for aminosteroids, neostigmine with antimuscarinic for shallow block), confirm TOF ratio at least 0.9 before extubation, and assess clinical recovery and airway protection before PACU transfer."
-      },
-      {
-        question: "What is your approach to postoperative pain management after major abdominal surgery?",
-        answer: "Use multimodal analgesia: paracetamol, NSAID if appropriate, opioid-sparing regional techniques (epidural or truncal blocks), rescue opioid titration, antiemetic strategy, early reassessment of pain scores and side effects, and individualized escalation if pain remains severe."
-      },
-      {
-        question: "How do you assess and optimize a patient with severe aortic stenosis before non-cardiac surgery?",
-        answer: "Clarify symptom severity and valve status, review echo and functional status, involve cardiology and surgery in risk discussion, prefer monitored hemodynamic stability, avoid tachycardia and hypotension, maintain preload/afterload, choose anesthetic plan with minimal instability, and ensure postoperative high-dependency monitoring."
-      }
-    ];
+    const qaPairs = Array.isArray(window.qaPairs) ? window.qaPairs : [];
 
     const questionBtn = document.getElementById("questionBtn");
     const answerField = document.getElementById("answerField");
+    const revealBtn = document.getElementById("revealBtn");
     const progressText = document.getElementById("progressText");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const categorySelect = document.getElementById("categorySelect");
     const dantroleneLink = document.getElementById("dantroleneLink");
 
+    const ALL_VALUE = "__all__";
+    const CATEGORY_ORDER = [
+      "clinical_anaesthesia",
+      "physics_physiology",
+      "pharmacology_clinical_measurements",
+      "anatomy",
+      "best_book",
+      "anae_doc",
+      "ABC_Verbal",
+      "WTF",
+    ];
+    const CATEGORY_LABELS = {
+      clinical_anaesthesia: "Clinical Anaesthesia",
+      physics_physiology: "Physics & Physiology",
+      pharmacology_clinical_measurements: "Pharmacology & Clinical Measurements",
+      anatomy: "Anatomy",
+      best_book: "Best Book",
+      anae_doc: "Anaesthesia Documents",
+      ABC_Verbal: "ABC Verbal / Viva Scenarios",
+      WTF: "Uncategorized",
+    };
+
+    let activePairs = qaPairs;
     let currentIndex = 0;
     let activeDrugKeyword = null;
     let hideTipTimer = null;
+
+    function populateCategorySelect() {
+      const counts = {};
+      qaPairs.forEach((p) => {
+        counts[p.section] = (counts[p.section] || 0) + 1;
+      });
+
+      const sections = Object.keys(counts).sort((a, b) => {
+        const ai = CATEGORY_ORDER.indexOf(a);
+        const bi = CATEGORY_ORDER.indexOf(b);
+        if (ai === -1 && bi === -1) return a.localeCompare(b);
+        if (ai === -1) return 1;
+        if (bi === -1) return -1;
+        return ai - bi;
+      });
+
+      const options = [`<option value="${ALL_VALUE}">All categories (${qaPairs.length})</option>`];
+      for (const section of sections) {
+        const label = CATEGORY_LABELS[section] || section;
+        options.push(`<option value="${escapeHtml(section)}">${escapeHtml(label)} (${counts[section]})</option>`);
+      }
+      categorySelect.innerHTML = options.join("");
+    }
+
+    function applyCategory(section) {
+      activePairs = section === ALL_VALUE ? qaPairs : qaPairs.filter((p) => p.section === section);
+      currentIndex = 0;
+      renderPair(currentIndex);
+    }
 
     function escapeHtml(text) {
       return text
@@ -335,10 +406,72 @@
       return escapeHtml(text).replace(/\b(dantrolene|dantrolen)\b/gi, '<span class="kw" data-drug="dantrolene">$1</span>');
     }
 
+    // Answers are stored as one long comma-joined string. Split into
+    // comma-separated phrases (ignoring commas inside parentheses/brackets
+    // so things like "1-2 ug/kg (induction)" stay whole), then regroup a
+    // few phrases at a time into paragraphs so the text reads in chunks
+    // instead of one wall of text or one bullet per phrase.
+    function splitPhrases(answer) {
+      const phrases = [];
+      let depth = 0;
+      let current = "";
+      for (const char of answer) {
+        if (char === "(" || char === "[") depth++;
+        if (char === ")" || char === "]") depth--;
+        if (char === "," && depth <= 0) {
+          phrases.push(current.trim());
+          current = "";
+        } else {
+          current += char;
+        }
+      }
+      if (current.trim()) phrases.push(current.trim());
+      return phrases.filter(Boolean);
+    }
+
+    function splitParagraphs(answer) {
+      const phrases = splitPhrases(answer);
+      const paragraphs = [];
+      let current = [];
+      let currentLength = 0;
+
+      for (const phrase of phrases) {
+        current.push(phrase);
+        currentLength += phrase.length;
+        const endsSentence = /[.!?]$/.test(phrase);
+        if (current.length >= 4 || currentLength >= 160 || endsSentence) {
+          paragraphs.push(current.join(", "));
+          current = [];
+          currentLength = 0;
+        }
+      }
+      if (current.length) paragraphs.push(current.join(", "));
+      return paragraphs;
+    }
+
     function renderPair(index) {
-      questionBtn.textContent = qaPairs[index].question;
-      answerField.innerHTML = decorateAnswer(qaPairs[index].answer);
-      progressText.textContent = `Question ${index + 1} of ${qaPairs.length}`;
+      if (!activePairs.length) {
+        questionBtn.textContent = "No questions in this category";
+        answerField.textContent = "";
+        progressText.textContent = "Question 0 of 0";
+        return;
+      }
+
+      const pair = activePairs[index];
+      questionBtn.textContent = pair.question;
+
+      if (!pair.answer.trim()) {
+        answerField.innerHTML = '<span class="empty">No answer written yet.</span>';
+      } else {
+        const paragraphs = splitParagraphs(pair.answer);
+        answerField.innerHTML = paragraphs.map((p) => `<p>${decorateAnswer(p)}</p>`).join("");
+      }
+
+      answerField.classList.add("is-hidden");
+      revealBtn.classList.remove("is-hidden");
+      revealBtn.textContent = "Show answer";
+
+      progressText.textContent = `Question ${index + 1} of ${activePairs.length}`;
     }
 
     function showDrugTip(target) {
@@ -358,8 +491,36 @@
     }
 
     questionBtn.addEventListener("click", () => {
-      currentIndex = (currentIndex + 1) % qaPairs.length;
+      if (!activePairs.length) {
+        return;
+      }
+      currentIndex = (currentIndex + 1) % activePairs.length;
       renderPair(currentIndex);
+    });
+
+    prevBtn.addEventListener("click", () => {
+      if (!activePairs.length) {
+        return;
+      }
+      currentIndex = (currentIndex - 1 + activePairs.length) % activePairs.length;
+      renderPair(currentIndex);
+    });
+
+    nextBtn.addEventListener("click", () => {
+      if (!activePairs.length) {
+        return;
+      }
+      currentIndex = (currentIndex + 1) % activePairs.length;
+      renderPair(currentIndex);
+    });
+
+    revealBtn.addEventListener("click", () => {
+      const isHidden = answerField.classList.toggle("is-hidden");
+      revealBtn.textContent = isHidden ? "Show answer" : "Hide answer";
+    });
+
+    categorySelect.addEventListener("change", () => {
+      applyCategory(categorySelect.value);
     });
 
     const drugTip = document.getElementById("drugTip");
@@ -400,16 +561,20 @@
 
     dantroleneLink.addEventListener("click", (event) => {
       event.preventDefault();
-      const idx = qaPairs.findIndex((pair) => /\bdantrolene\b/i.test(pair.question));
-      if (idx >= 0) {
-        currentIndex = idx;
+      const target = qaPairs.find((pair) => /\bdantrolene\b/i.test(pair.question) || /\bdantrolene\b/i.test(pair.answer));
+      if (target) {
+        categorySelect.value = ALL_VALUE;
+        applyCategory(ALL_VALUE);
+        currentIndex = activePairs.indexOf(target);
         renderPair(currentIndex);
       }
       activeDrugKeyword = null;
       drugTip.style.display = "none";
     });
 
-    renderPair(currentIndex);
+    populateCategorySelect();
+    categorySelect.value = ALL_VALUE;
+    applyCategory(ALL_VALUE);
   </script>
 </body>
 </html>
